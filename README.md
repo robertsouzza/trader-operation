@@ -46,8 +46,8 @@ Infraestrutura pronta.
 
 | Serviço | Endereço | Credenciais (dev) |
 |---|---|---|
-| PostgreSQL | `localhost:5432`, banco `trader` | `trader` / `trader_dev` |
-| Redis | `localhost:6379` | sem senha |
+| PostgreSQL | `localhost:5434`, banco `trader` | `trader` / `trader_dev` |
+| Redis | `localhost:6380` | sem senha |
 | S3 (SeaweedFS) | `http://localhost:8333`, bucket `trader-arquivos` | `trader_dev` / `trader_dev_secret` |
 
 Portas ocupadas? Ajuste `TRADER_*_PORT` no `.env`. Para parar: `docker compose down` (os dados ficam nos volumes; `docker compose down -v` apaga tudo).

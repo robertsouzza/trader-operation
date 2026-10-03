@@ -20,7 +20,7 @@ services:
       TZ: UTC
       PGTZ: UTC
     ports:
-      - "${TRADER_POSTGRES_PORT:-5432}:5432"
+      - "${TRADER_POSTGRES_PORT:-5434}:5432"
     volumes:
       - trader_pgdata:/var/lib/postgresql/data
       - ./infra/postgres:/docker-entrypoint-initdb.d:ro
@@ -36,7 +36,7 @@ services:
     image: redis:7.4-alpine
     container_name: trader-redis
     ports:
-      - "${TRADER_REDIS_PORT:-6379}:6379"
+      - "${TRADER_REDIS_PORT:-6380}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
