@@ -24,7 +24,8 @@ Plataforma web de análise e operação em tempo real com IA, integrada ao MetaT
 
 ## Onde paramos
 
-- **03/out/2026:** skill 00 concluída (monorepo, referências, infra Postgres+pgvector, Redis, S3/SeaweedFS). Próxima: escrever e revisar com o Roberto o `SKILL.md` da `trader-01-nucleo-core`.
+- **03/out/2026:** skill 00 concluída (monorepo, referências, infra Postgres+pgvector, Redis, S3/SeaweedFS).
+- **03/out/2026:** skill 01 concluída (`nucleo-backend`: shared, auditoria, autenticação por cookie JWT + CSRF, ArchUnit, 23 testes). Próxima: escrever e revisar com o Roberto o `SKILL.md` da `trader-02-planos-perfis`.
 
 ## Ao fechar uma sessão
 

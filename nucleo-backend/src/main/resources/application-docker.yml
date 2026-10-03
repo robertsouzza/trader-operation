@@ -1,0 +1,23 @@
+# Rodando dentro do docker-compose: os serviços se encontram pelo nome.
+# Continua sendo ambiente de desenvolvimento (inclui os usuários sintéticos).
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/${TRADER_POSTGRES_DB:trader}
+    username: ${TRADER_POSTGRES_USER:trader}
+    password: ${TRADER_POSTGRES_PASSWORD:trader_dev}
+  data:
+    redis:
+      host: redis
+      port: 6379
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed-dev
+
+trader:
+  jwt:
+    secret: ${TRADER_JWT_SECRET:dev-somente-local-troque-em-producao-0123456789abcdef0123456789abcdef}
+  cookie:
+    secure: false
+  s3:
+    endpoint: http://s3:8333
+    access-key: ${TRADER_S3_ACCESS_KEY:trader_dev}
+    secret-key: ${TRADER_S3_SECRET_KEY:trader_dev_secret}

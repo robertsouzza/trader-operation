@@ -1,0 +1,19 @@
+# Testes: o datasource vem do Testcontainers (@ServiceConnection).
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed-dev
+
+management:
+  health:
+    redis:
+      enabled: false
+
+trader:
+  jwt:
+    secret: segredo-de-teste-com-mais-de-sessenta-e-quatro-caracteres-0123456789abcdef
+  cookie:
+    secure: false
+  s3:
+    endpoint: http://localhost:8333
+    access-key: teste
+    secret-key: teste

@@ -24,8 +24,8 @@ replay_pid*
 node_modules/
 dist/
 dist-ssr/
-out/
-release/
+copiloto/out/
+copiloto/release/
 *.tsbuildinfo
 .vite/
 

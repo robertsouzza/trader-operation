@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: nucleo-backend
+  profiles:
+    default: dev
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    locations: classpath:db/migration
+  jackson:
+    time-zone: UTC
+
+server:
+  port: 8090
+  error:
+    include-message: never
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+trader:
+  jwt:
+    secret: ${TRADER_JWT_SECRET}
+    access-minutos: 15
+    refresh-dias: 7
+  cookie:
+    secure: ${TRADER_COOKIE_SECURE:true}
+  cors:
+    origens: ${TRADER_CORS_ORIGENS:http://localhost:5173}
+  s3:
+    endpoint: ${TRADER_S3_ENDPOINT}
+    access-key: ${TRADER_S3_ACCESS_KEY}
+    secret-key: ${TRADER_S3_SECRET_KEY}
+    bucket: ${TRADER_S3_BUCKET:trader-arquivos}
+    region: us-east-1
