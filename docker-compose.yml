@@ -1,0 +1,89 @@
+# ============================================================
+# Trader Operation — docker-compose.yml (skill 00: infraestrutura)
+# ============================================================
+# Só serviços de infraestrutura para desenvolvimento local.
+# nucleo-backend entra na skill 01 e motor-quant na skill 04.
+#
+# Portas e credenciais vêm do .env (ver .env.example); todas
+# têm valor padrão, então o compose sobe mesmo sem .env.
+# Credenciais aqui são SOMENTE de desenvolvimento.
+# ============================================================
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.1-pg16
+    container_name: trader-postgres
+    environment:
+      POSTGRES_USER: ${TRADER_POSTGRES_USER:-trader}
+      POSTGRES_PASSWORD: ${TRADER_POSTGRES_PASSWORD:-trader_dev}
+      POSTGRES_DB: ${TRADER_POSTGRES_DB:-trader}
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "${TRADER_POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - trader_pgdata:/var/lib/postgresql/data
+      - ./infra/postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: trader-redis
+    ports:
+      - "${TRADER_REDIS_PORT:-6380}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # Armazenamento compatível com S3 (arquivos de estratégias, relatórios).
+  # SeaweedFS no lugar do MinIO: as imagens oficiais do MinIO saíram do
+  # Docker Hub (ver D-08 em decisoes-tomadas.md).
+  s3:
+    image: chrislusf/seaweedfs:4.48
+    container_name: trader-s3
+    command: server -dir=/data -s3 -s3.port=8333 -s3.config=/etc/seaweedfs/s3.json
+    ports:
+      - "${TRADER_S3_PORT:-8333}:8333"
+    volumes:
+      - trader_s3data:/data
+      - ./infra/seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8333/healthz || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+
+  # Container efêmero: cria o bucket privado e sai.
+  s3-init:
+    image: amazon/aws-cli:2.37.9
+    container_name: trader-s3-init
+    depends_on:
+      s3:
+        condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: ${TRADER_S3_ACCESS_KEY:-trader_dev}
+      AWS_SECRET_ACCESS_KEY: ${TRADER_S3_SECRET_KEY:-trader_dev_secret}
+      AWS_DEFAULT_REGION: us-east-1
+      BUCKET: ${TRADER_S3_BUCKET:-trader-arquivos}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        aws --endpoint-url http://s3:8333 s3api head-bucket --bucket "$$BUCKET" 2>/dev/null \
+          || aws --endpoint-url http://s3:8333 s3 mb "s3://$$BUCKET"
+        echo "Bucket $$BUCKET pronto."
+    restart: "no"
+
+volumes:
+  trader_pgdata:
+  trader_s3data:
