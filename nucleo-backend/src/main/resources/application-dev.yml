@@ -1,0 +1,23 @@
+# Desenvolvimento no WSL, falando com a infra do docker-compose pelas portas do host (.env).
+# Credenciais e segredo abaixo são SOMENTE de desenvolvimento.
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${TRADER_POSTGRES_PORT:5434}/${TRADER_POSTGRES_DB:trader}
+    username: ${TRADER_POSTGRES_USER:trader}
+    password: ${TRADER_POSTGRES_PASSWORD:trader_dev}
+  data:
+    redis:
+      host: localhost
+      port: ${TRADER_REDIS_PORT:6380}
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed-dev
+
+trader:
+  jwt:
+    secret: ${TRADER_JWT_SECRET:dev-somente-local-troque-em-producao-0123456789abcdef0123456789abcdef}
+  cookie:
+    secure: false
+  s3:
+    endpoint: ${TRADER_S3_ENDPOINT:http://localhost:${TRADER_S3_PORT:8333}}
+    access-key: ${TRADER_S3_ACCESS_KEY:trader_dev}
+    secret-key: ${TRADER_S3_SECRET_KEY:trader_dev_secret}
