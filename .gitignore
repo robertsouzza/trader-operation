@@ -1,0 +1,69 @@
+# ==============================================================
+# Trader Operation — .gitignore
+# ==============================================================
+# Nunca commitar: .env, chaves de API de IA, senhas de conta MT5,
+# chaves de pagamento, dados reais de clientes.
+# ==============================================================
+
+# --- Segredos ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Java / Maven (nucleo-backend) ---
+target/
+*.class
+*.jar
+*.war
+hs_err_pid*
+replay_pid*
+
+# --- Node / React / Electron (frontend-app, copiloto) ---
+node_modules/
+dist/
+dist-ssr/
+out/
+release/
+*.tsbuildinfo
+.vite/
+
+# --- Python (motor-quant, conector) ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.ipynb_checkpoints/
+
+# --- MQL5 compilado ---
+*.ex5
+
+# --- Testes e cobertura ---
+coverage/
+htmlcov/
+.coverage
+playwright-report/
+test-results/
+
+# --- Logs ---
+*.log
+logs/
+
+# --- IDEs ---
+.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*~
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
