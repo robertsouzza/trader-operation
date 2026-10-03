@@ -50,6 +50,22 @@ Infraestrutura pronta.
 | Redis | `localhost:6380` | sem senha |
 | S3 (SeaweedFS) | `http://localhost:8333`, bucket `trader-arquivos` | `trader_dev` / `trader_dev_secret` |
 
+### Núcleo (API)
+
+Pelo Docker, junto com a infra: `docker compose up -d --build`. Ou direto no WSL, com a infra no ar:
+
+```bash
+cd nucleo-backend
+./mvnw spring-boot:run      # profile dev, porta 8090
+./mvnw verify               # testes, incluindo ArchUnit e Testcontainers
+```
+
+| Serviço | Endereço |
+|---|---|
+| API | `http://localhost:8090` |
+| Swagger | `http://localhost:8090/swagger-ui.html` |
+| Usuários de dev (sintéticos) | `admin@`, `master@`, `cliente@trader.local`, senha `trader123` |
+
 Portas ocupadas? Ajuste `TRADER_*_PORT` no `.env`. Para parar: `docker compose down` (os dados ficam nos volumes; `docker compose down -v` apaga tudo).
 
 ## Como o projeto é construído
@@ -61,8 +77,9 @@ O sistema é gerado em **skills numeradas** do Claude Code, cada uma com Definit
 | # | Skill | Status |
 |---|---|---|
 | 00 | [trader-00-infra-base](skills/trader-00-infra-base/SKILL.md) | ✅ concluída |
-| 01 | trader-01-nucleo-core | ⏳ próxima |
-| 02–12 | ver [índice](skills/trader-fullstack/SKILL.md) | ⏳ pendentes |
+| 01 | [trader-01-nucleo-core](skills/trader-01-nucleo-core/SKILL.md) | ✅ concluída |
+| 02 | trader-02-planos-perfis | ⏳ próxima |
+| 03–12 | ver [índice](skills/trader-fullstack/SKILL.md) | ⏳ pendentes |
 
 ## Licença
 
