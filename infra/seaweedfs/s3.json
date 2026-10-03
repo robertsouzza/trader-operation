@@ -1,0 +1,11 @@
+{
+  "identities": [
+    {
+      "name": "dev",
+      "credentials": [
+        { "accessKey": "trader_dev", "secretKey": "trader_dev_secret" }
+      ],
+      "actions": ["Admin", "Read", "List", "Tagging", "Write"]
+    }
+  ]
+}
