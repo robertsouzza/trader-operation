@@ -15,7 +15,7 @@ import java.util.List;
 class ArquiteturaHexagonalTest {
 
     /** Módulos de negócio. Ao criar um módulo novo, inclua-o aqui. */
-    private static final List<String> MODULOS = List.of("autenticacao", "auditoria");
+    private static final List<String> MODULOS = List.of("autenticacao", "auditoria", "planos");
 
     @ArchTest
     static final ArchRule dominioNaoConheceFrameworks = noClasses()
@@ -45,6 +45,13 @@ class ArquiteturaHexagonalTest {
     static final ArchRule semCiclosEntreModulos = slices()
             .matching("com.traderoperation.(*)..")
             .should().beFreeOfCycles();
+
+    /** D-15: o enum Direito nunca sai do módulo planos; outros módulos usam só os nomes (String). */
+    @ArchTest
+    static final ArchRule enumDireitoNaoSaiDoModuloPlanos = noClasses()
+            .that().resideOutsideOfPackage("com.traderoperation.planos..")
+            .should().dependOnClassesThat().haveFullyQualifiedName("com.traderoperation.planos.domain.Direito")
+            .because("D-15: o enum Direito é privado ao módulo planos; fronteiras recebem Set<String>");
 
     private static ArchRule acessoSoPorPortIn(String modulo) {
         String base = "com.traderoperation." + modulo;

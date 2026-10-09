@@ -64,7 +64,17 @@ DoD atingido:
 Ref: skills/trader-XX-<nome>/SKILL.md
 ```
 
-Prefixos: `feat(trader-XX)`, `fix(trader-XX)` (correção retroativa), `docs:`, `chore:`.
+Prefixos: `feat(trader-XX)`, `fix(trader-XX)` (correção retroativa), `docs(trader-XX)` (spec/revisão da skill antes do DoD), `docs:`, `chore:`.
+
+## Push e PR automáticos ao fim da skill (D-18)
+
+Fluxo padrão de uma skill:
+
+1. Branch `trader-XX-nome` a partir da `main`.
+2. Rascunho e revisão do `SKILL.md` com o Roberto (pode subir como `docs(trader-XX)` sem PR).
+3. Implementação na mesma branch, com commits intermediários livres.
+4. **Ao fechar DoD verde:** atualizar `README.md` ("Estado atual") e `CLAUDE.md` ("Onde paramos") no mesmo commit `feat(trader-XX)`; em seguida, `git push -u origin trader-XX-nome` e `gh pr create` para `main`. Nada disso espera pedido manual.
+5. Merge é do Roberto. Nunca force push, nunca `gh pr merge` sozinho.
 
 ## Ao fechar uma sessão
 

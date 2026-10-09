@@ -97,6 +97,42 @@ Usar sempre a versão estável mais recente compatível de cada dependência e *
 
 ---
 
+## Planos e perfis
+
+### D-15 · Direito é enum fechado no código
+
+A lista de direitos (`VER_OPERACAO_TEMPO_REAL`, `USAR_COPILOTO_MT5`, `PEDIR_BACKTEST_IA` etc.) é um `enum Direito` em `com.traderoperation.planos.domain`, versionado no git. As matrizes **plano → direitos** e **perfil → direitos** vivem como `Map` imutável no bean `MatrizDeDireitos`, também versionado. O conjunto de direitos de um usuário é a união das duas matrizes (perfil + plano ativo).
+
+Trocar a matriz exige deploy. Nenhuma edição por admin em tempo de execução nesta fase. Se um direito dinâmico virar necessidade real (ex.: trial de 7 dias de PREMIUM), avaliar o modelo híbrido (enum + tabela de associação) numa decisão de revisão.
+
+**Por quê:** simples, testável, impossível de ficar inconsistente, e evita UI de admin para editar permissões antes do produto existir. (09/out/2026)
+
+### D-16 · Assinatura é modelada já na skill 02
+
+A entidade `Assinatura(usuario_id, plano, inicio_em, fim_em, status, origem)` nasce na skill 02, com `status ∈ {ATIVA, CANCELADA, VENCIDA}` e `origem ∈ {MANUAL, PAGAMENTO}`. Um usuário tem no máximo uma assinatura `ATIVA` (constraint parcial no banco). Plano atual = assinatura ativa; sem assinatura ativa, o padrão é `FREE`.
+
+A skill 09 (pagamentos) não cria tabela nova: só chama `AtribuirPlanoUseCase` com `origem = PAGAMENTO` depois da confirmação do PSP, reusando o mesmo caminho do admin.
+
+**Por quê:** evita migração dupla depois e deixa o modelo coerente desde o início; a complexidade adicional é pequena (uma tabela, dois enums). (09/out/2026)
+
+### D-17 · Admin API mínima na skill 02
+
+A skill 02 expõe só dois endpoints de admin: `GET /api/admin/usuarios` (paginado, com busca) e `PUT /api/admin/usuarios/{id}/plano` (cria assinatura manual). Nenhum CRUD de usuário, nenhum endpoint para editar perfil ou ativar/desativar nesta skill. Essas operações ficam para uma skill de admin futura, quando houver tela.
+
+**Por quê:** cobre o que a vitrine e os pagamentos vão precisar (atribuir plano a cliente) sem inflar o escopo. Até lá, admin cria usuários novos pelo seed ou direto no banco. (09/out/2026)
+
+---
+
+## Fluxo de trabalho
+
+### D-18 · Fim de skill = commit + push + PR automáticos
+
+Quando uma skill fecha com Definition of Done verde, no mesmo passo que atualiza `README.md` ("Estado atual") e `CLAUDE.md` ("Onde paramos"), o Claude Code **comita, dá push e abre PR** da branch `trader-XX-nome` para `main` sem precisar que o Roberto peça. Rascunho/spec intermediária (ex.: só o `SKILL.md`) pode subir sem PR; o PR só nasce com o DoD verde. Nunca força push, nunca mescla sozinho — o merge é do Roberto.
+
+**Por quê:** elimina o passo manual repetitivo de "sobe pra main" sem perder o portão humano no merge. (09/out/2026)
+
+---
+
 ## Em aberto (decidir antes da skill indicada)
 
 | Tema | Decidir antes de | Opções |
