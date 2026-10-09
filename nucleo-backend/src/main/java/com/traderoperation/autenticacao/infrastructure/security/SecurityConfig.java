@@ -1,6 +1,7 @@
 package com.traderoperation.autenticacao.infrastructure.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.traderoperation.planos.application.port.in.VerificarDireitoUseCase;
 import com.traderoperation.shared.error.ErroResposta;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,8 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, JwtService jwt, ObjectMapper json) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, JwtService jwt, ObjectMapper json,
+                                            VerificarDireitoUseCase direitos) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
                 // SPA: o React lê o cookie XSRF-TOKEN e devolve no cabeçalho X-XSRF-TOKEN.
@@ -35,7 +37,7 @@ class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/refresh", "/api/auth/logout")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/auth/csrf").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/csrf", "/api/planos").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/error").permitAll()
@@ -53,7 +55,7 @@ class SecurityConfig {
                             json.writeValue(res.getOutputStream(), ErroResposta.de(403, "Forbidden",
                                     "Acesso negado ou token CSRF ausente."));
                         }))
-                .addFilterBefore(new JwtCookieAuthFilter(jwt), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtCookieAuthFilter(jwt, direitos), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
