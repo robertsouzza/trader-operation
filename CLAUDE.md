@@ -28,7 +28,8 @@ Plataforma web de análise e operação em tempo real com IA, integrada ao MetaT
 - **03/out/2026:** skill 00 concluída (monorepo, referências, infra Postgres+pgvector, Redis, S3/SeaweedFS).
 - **03/out/2026:** skill 01 concluída (`nucleo-backend`: shared, auditoria, autenticação por cookie JWT + CSRF, ArchUnit, 23 testes).
 - **09/out/2026:** `SKILL.md` da `trader-02-planos-perfis` escrito e aprovado pelo Roberto; decisões D-15 (Direito enum), D-16 (Assinatura já aqui), D-17 (admin API mínima) e D-18 (push + PR automáticos no fim de skill) registradas.
-- **09/out/2026:** skill 02 concluída (`planos`: enum `Direito` + `MatrizDeDireitos`, entidade `Assinatura`, endpoints `/api/planos`, `/api/me/plano`, `/api/admin/usuarios`, filtro JWT populando authorities por direito, ArchUnit com módulo novo + regra blindando o enum, 41 testes). Próxima: `trader-03-frontend-core` (React, login por cookie, rotas por perfil + direito).
+- **09/out/2026:** skill 02 concluída (`planos`: enum `Direito` + `MatrizDeDireitos`, entidade `Assinatura`, endpoints `/api/planos`, `/api/me/plano`, `/api/admin/usuarios`, filtro JWT populando authorities por direito, ArchUnit com módulo novo + regra blindando o enum, 41 testes).
+- **09/out/2026:** `SKILL.md` da `trader-03-frontend-core` escrito e aprovado pelo Roberto; D-19 (fetch + wrapper), D-20 (Tailwind puro), D-21 (feature-based) registradas. Branch `trader-03-frontend-core` criada. Próximo passo: implementar a skill 03 e, ao fechar DoD, PR para a `main`.
 
 ## Ao fechar uma sessão
 
