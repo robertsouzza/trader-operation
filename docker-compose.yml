@@ -115,6 +115,20 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  # frontend-app servido por nginx (skill 03). O dev local do dia a dia
+  # roda `npm run dev` direto no WSL; este container fecha o compose do produto.
+  frontend-app:
+    build:
+      context: ./frontend-app
+      dockerfile: Dockerfile
+    container_name: trader-frontend-app
+    depends_on:
+      nucleo-backend:
+        condition: service_healthy
+    ports:
+      - "${TRADER_FRONTEND_PORT:-5173}:80"
+    restart: unless-stopped
+
 volumes:
   trader_pgdata:
   trader_s3data:

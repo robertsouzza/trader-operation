@@ -123,6 +123,28 @@ A skill 02 expõe só dois endpoints de admin: `GET /api/admin/usuarios` (pagina
 
 ---
 
+## Frontend
+
+### D-19 · HTTP via fetch + wrapper fino
+
+O `frontend-app` conversa com o backend por `fetch` nativo encapsulado num helper (`shared/api/apiClient.ts`). Sem axios, sem ky. O wrapper sempre inclui `credentials: 'include'`, chama `GET /api/auth/csrf` sob demanda, injeta `X-XSRF-TOKEN` em mutações e normaliza erros em `NaoAutorizadoError` / `AcessoNegadoError` / `ErroApi`. Nunca lê nem grava token em `localStorage`.
+
+**Por quê:** zero dependência extra, casa bem com TanStack Query e deixa a camada de rede visível e testável. (09/out/2026)
+
+### D-20 · Tailwind CSS, sem lib de componentes
+
+Estilização via Tailwind CSS 4 (plugin `@tailwindcss/vite`). Botão, campo, diálogo e etc. nascem em `src/shared/componentes/` escritos à mão com classes Tailwind. Nada de shadcn/ui, Chakra ou MUI nesta fase; se um componente complexo (data picker, combobox) virar necessidade real, reavalia com decisão nova.
+
+**Por quê:** produtividade do utility-first sem o peso de uma lib que impõe seu próprio design system antes de a UI do produto existir. (09/out/2026)
+
+### D-21 · Estrutura feature-based espelhando o backend
+
+Dentro de `frontend-app/src/`: `shared/` (api, layout, componentes, segurança) e `features/{autenticacao, planos, admin, home}`. Cada feature tem seus próprios `api/`, `hooks/`, `pages/` e `componentes/`. Nenhum `components/`, `services/` ou `pages/` globais fora de `shared/`.
+
+**Por quê:** espelha os módulos hexagonais do `nucleo-backend`; mover uma feature inteira é só mover a pasta; a cabeça do leitor segue o mesmo mapa dos dois lados. (09/out/2026)
+
+---
+
 ## Fluxo de trabalho
 
 ### D-18 · Fim de skill = commit + push + PR automáticos
