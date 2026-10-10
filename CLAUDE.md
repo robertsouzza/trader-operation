@@ -30,7 +30,8 @@ Plataforma web de análise e operação em tempo real com IA, integrada ao MetaT
 - **09/out/2026:** `SKILL.md` da `trader-02-planos-perfis` escrito e aprovado pelo Roberto; decisões D-15 (Direito enum), D-16 (Assinatura já aqui), D-17 (admin API mínima) e D-18 (push + PR automáticos no fim de skill) registradas.
 - **09/out/2026:** skill 02 concluída (`planos`: enum `Direito` + `MatrizDeDireitos`, entidade `Assinatura`, endpoints `/api/planos`, `/api/me/plano`, `/api/admin/usuarios`, filtro JWT populando authorities por direito, ArchUnit com módulo novo + regra blindando o enum, 41 testes).
 - **09/out/2026:** `SKILL.md` da `trader-03-frontend-core` escrito e aprovado pelo Roberto; D-19 (fetch + wrapper), D-20 (Tailwind puro), D-21 (feature-based) registradas.
-- **10/out/2026:** skill 03 concluída (`frontend-app`: Vite 6 + React 19 + TS strict + Tailwind 4.1, feature-based, cliente HTTP com CSRF, UsuarioAtualProvider com TanStack Query, rotas protegidas por perfil + direito, telas de login/home/catálogo/meu-plano/admin + diálogo de troca de plano, 16 testes, Dockerfile.dev + nginx). Próxima: `trader-04-motor-quant-base` (FastAPI, dados de mercado, candles, indicadores).
+- **10/out/2026:** skill 03 concluída (`frontend-app`: Vite 6 + React 19 + TS strict + Tailwind 4.1, feature-based, cliente HTTP com CSRF, UsuarioAtualProvider com TanStack Query, rotas protegidas por perfil + direito, telas de login/home/catálogo/meu-plano/admin + diálogo de troca de plano, 16 testes, Dockerfile.dev + nginx).
+- **10/out/2026:** `SKILL.md` da `trader-04-motor-quant-base` escrito e aprovado pelo Roberto; D-22 (fonte MT5 via VPS + seed sintético em dev), D-23 (shared secret `X-INTERNAL-TOKEN` em todas as rotas de negócio), D-24 (SMA, EMA, RSI, MACD) registradas. Branch `trader-04-motor-quant-base` criada. Próximo passo: implementar a skill 04 e, ao fechar DoD, PR para a `main`.
 
 ## Ao fechar uma sessão
 
