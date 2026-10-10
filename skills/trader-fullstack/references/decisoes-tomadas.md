@@ -145,6 +145,28 @@ Dentro de `frontend-app/src/`: `shared/` (api, layout, componentes, segurança) 
 
 ---
 
+## Motor quantitativo
+
+### D-22 · Fonte de dados = MT5 do master no VPS Windows
+
+Em produção, o `motor-quant` recebe candles de NAS100 e XAUUSD do MT5 do operador master rodando num VPS Windows (via o `conector` da skill 10). O conector empurra lotes com `POST /api/motor/ingest/candles` autenticado pelo shared secret interno (D-23). Em dev, o `motor-quant` carrega CSVs sintéticos no startup quando `TRADER_MOTOR_SEED=dev`. Provedor de dados pago fica para depois do MVP, se os clientes exigirem independência do VPS.
+
+**Por quê:** reusa a conta de trading que o master já tem (custo zero), dados reais do mesmo broker, latency aceitável para o tipo de operação do produto. (10/out/2026)
+
+### D-23 · Shared secret interno no motor-quant
+
+Toda rota de negócio do `motor-quant` exige header `X-INTERNAL-TOKEN` comparado por `secrets.compare_digest` com `MOTOR_SHARED_TOKEN` do ambiente. Só `/healthz` é público. Mesmo que o container viva na rede interna do compose, o header evita que erro de configuração (uma porta exposta por engano, um túnel aberto para debug) vire exposição pública. Autenticação de usuário final nunca chega ao `motor-quant` — quem é o usuário é responsabilidade do `nucleo-backend`.
+
+**Por quê:** defesa em profundidade quase sem custo, e deixa pronto para o dia em que o motor rode num host separado da nuvem. (10/out/2026)
+
+### D-24 · Indicadores iniciais: SMA, EMA, RSI, MACD
+
+A skill 04 entrega quatro indicadores sobre fechamentos: **SMA**, **EMA**, **RSI** (14 por padrão) e **MACD** (12/26/9 por padrão, com linha de sinal e histograma). Todos como funções puras sobre `numpy.ndarray` em `motor_quant/dominio/indicadores.py`, sem I/O. Bandas de Bollinger, Stochastic e outros entram quando houver demanda real das estratégias da vitrine.
+
+**Por quê:** cobre o que o operador master já usa hoje e é suficiente para a IA explicar e para o backtest da skill 08 começar. Lista mínima evita que a skill 04 vire um `ta-lib` reimplementado antes de a plataforma rodar. (10/out/2026)
+
+---
+
 ## Fluxo de trabalho
 
 ### D-18 · Fim de skill = commit + push + PR automáticos
