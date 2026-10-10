@@ -79,7 +79,7 @@ O sistema é gerado em **skills numeradas** do Claude Code, cada uma com Definit
 | 00 | [trader-00-infra-base](skills/trader-00-infra-base/SKILL.md) | ✅ concluída |
 | 01 | [trader-01-nucleo-core](skills/trader-01-nucleo-core/SKILL.md) | ✅ concluída |
 | 02 | [trader-02-planos-perfis](skills/trader-02-planos-perfis/SKILL.md) | ✅ concluída |
-| 03 | [trader-03-frontend-core](skills/trader-03-frontend-core/SKILL.md) | 📝 SKILL.md escrito, implementação em andamento |
+| 03 | [trader-03-frontend-core](skills/trader-03-frontend-core/SKILL.md) | ✅ concluída |
 | 04–12 | ver [índice](skills/trader-fullstack/SKILL.md) | ⏳ pendentes |
 
 ## Licença

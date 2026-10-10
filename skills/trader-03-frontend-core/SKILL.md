@@ -22,7 +22,9 @@ Cria o `frontend-app/` com o esqueleto do React do produto: boot (Vite + Router 
 
 1. **Projeto Vite em `frontend-app/`** (`npm create vite@latest` manual, não via skill), com versões pinadas (D-14):
    - Runtime: `react@19`, `react-dom@19`, `react-router-dom@6`, `@tanstack/react-query@5`, `@tanstack/react-query-devtools@5`.
-   - Dev: `vite@7`, `@vitejs/plugin-react`, `vitest@3`, `@testing-library/react@16`, `@testing-library/jest-dom@6`, `@testing-library/user-event@14`, `jsdom`, `@types/react`, `@types/react-dom`, `@types/node`, `typescript@5`, `eslint@9`, `@typescript-eslint/*`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `tailwindcss@4`, `@tailwindcss/vite@4`, `autoprefixer`, `postcss`.
+   - Dev: `vite@6`, `@vitejs/plugin-react`, `vitest@3`, `@testing-library/react@16`, `@testing-library/jest-dom@6`, `@testing-library/user-event@14`, `jsdom`, `@types/react`, `@types/react-dom`, `@types/node`, `typescript@5`, `eslint@9`, `@typescript-eslint/*`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `tailwindcss@4.1`, `@tailwindcss/vite@4.1`, `autoprefixer`, `postcss`.
+   - Vitest 3 pede Vite 6; o par Tailwind 4.1 é o primeiro que aceita Vite 6 sem bug de build; `@tailwindcss/vite@4.0.0` falha em `build` com "Cannot convert undefined or null to object".
+   - Dois configs separados: `vite.config.ts` (sem campo `test`) e `vitest.config.ts` (via `defineConfig` de `vitest/config`), para evitar que o `UserConfig` do Vite 6 brigue com o `UserConfig` do Vite interno do Vitest.
    - Scripts no `package.json`: `dev`, `build`, `preview`, `test`, `test:ci` (`vitest run --coverage`), `typecheck` (`tsc --noEmit`), `lint`.
    - Dev server na porta **5173** (padrão Vite, alinhado com `TRADER_CORS_ORIGENS` do backend).
    - `.env.example` com `VITE_API_BASE_URL=http://localhost:8090`. Nunca commitar `.env`.
