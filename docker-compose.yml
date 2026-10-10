@@ -129,6 +129,27 @@ services:
       - "${TRADER_FRONTEND_PORT:-5173}:80"
     restart: unless-stopped
 
+  # motor-quant: FastAPI com candles em memória e indicadores (skill 04).
+  # Em dev, carrega CSVs sintéticos de data/seed-dev no startup.
+  # Protegido por shared secret MOTOR_SHARED_TOKEN (D-23); só /healthz é público.
+  motor-quant:
+    build:
+      context: ./motor-quant
+      dockerfile: Dockerfile
+    container_name: trader-motor-quant
+    environment:
+      MOTOR_SHARED_TOKEN: ${MOTOR_SHARED_TOKEN:-dev-interno-trocar-em-producao}
+      TRADER_MOTOR_SEED: ${TRADER_MOTOR_SEED:-dev}
+    ports:
+      - "${TRADER_MOTOR_PORT:-8091}:8091"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://127.0.0.1:8091/healthz\")' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+
 volumes:
   trader_pgdata:
   trader_s3data:
