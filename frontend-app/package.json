@@ -13,6 +13,7 @@
     "lint": "eslint 'src/**/*.{ts,tsx}'"
   },
   "dependencies": {
+    "@stomp/stompjs": "7.1.1",
     "@tanstack/react-query": "5.62.11",
     "@tanstack/react-query-devtools": "5.62.11",
     "react": "19.0.0",

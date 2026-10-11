@@ -6,6 +6,7 @@ import { Botao } from '@/shared/componentes/Botao';
 import { Carregando } from '@/shared/componentes/Carregando';
 import { ChatOperacao } from '../componentes/ChatOperacao';
 import { FormularioEncerrarOperacao } from '../componentes/FormularioEncerrarOperacao';
+import { useContadorParticipantes } from '../hooks/useContadorParticipantes';
 import type { OperacaoResumo } from '../api/operacoesApi';
 
 const FORMATO_DATA = new Intl.DateTimeFormat('pt-BR', {
@@ -27,6 +28,11 @@ export function OperacaoPage() {
   const consulta = useOperacao(id ?? null);
   const { usuario, direitos } = useUsuarioAtual();
   const [encerrando, setEncerrando] = useState(false);
+  // Hooks ficam antes dos early returns. Passamos null quando a operação não existe
+  // ou não está PUBLICADA — o hook interno trata e devolve 0.
+  const operacaoAtiva =
+    consulta.data && consulta.data.status === 'PUBLICADA' ? consulta.data.id : null;
+  const participantes = useContadorParticipantes(operacaoAtiva);
 
   if (!id) {
     return <p className="text-erro">ID de operação inválido.</p>;
@@ -64,7 +70,14 @@ export function OperacaoPage() {
             Publicada em {formatarData(op.publicadaEm)} por {op.masterNome}
           </p>
         </div>
-        <StatusBadge op={op} />
+        <div className="flex flex-col items-end gap-1">
+          <StatusBadge op={op} />
+          {op.status === 'PUBLICADA' ? (
+            <span className="text-xs text-texto-sutil">
+              {participantes} participante(s) ao vivo
+            </span>
+          ) : null}
+        </div>
       </header>
 
       <div className="grid gap-4 rounded-lg border border-borda bg-superficie p-5 sm:grid-cols-3">

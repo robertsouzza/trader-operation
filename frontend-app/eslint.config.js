@@ -28,6 +28,9 @@ export default [
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
+      // A regra base do JS não entende tipos (ex.: parâmetro em `type X<T> = (p: T) => void`);
+      // delegamos para a versão TS que lida corretamente com isso.
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': 'error',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
