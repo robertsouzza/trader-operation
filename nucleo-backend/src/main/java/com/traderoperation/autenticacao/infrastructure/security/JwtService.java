@@ -62,6 +62,7 @@ public class JwtService implements TokenPort {
     }
 
     /** Usuário do access token, se válido. */
+    @Override
     public Optional<UsuarioAutenticado> validarAccess(String token) {
         return claims(token, TIPO_ACCESS).map(c -> new UsuarioAutenticado(
                 UUID.fromString(c.getSubject()), c.get("email", String.class), c.get("perfil", String.class)));

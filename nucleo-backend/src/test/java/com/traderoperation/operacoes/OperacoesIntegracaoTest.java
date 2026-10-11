@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.traderoperation.support.AbstractIntegracaoTest;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -16,29 +17,18 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 /** Ponta-a-ponta REST da skill 05: publicar, listar ao vivo, encerrar, chat e barreiras por direito. */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class OperacoesIntegracaoTest {
-
-    @Container
-    @ServiceConnection
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>(
-            DockerImageName.parse("pgvector/pgvector:0.8.1-pg16").asCompatibleSubstituteFor("postgres"));
+class OperacoesIntegracaoTest extends AbstractIntegracaoTest {
 
     private static final String CSRF = "token-csrf-de-teste";
 
@@ -130,31 +120,26 @@ class OperacoesIntegracaoTest {
     @Test
     @Order(4)
     void clienteFreeNaoEnxergaOperacaoRecemPublicada() throws Exception {
-        // Garante que o cliente está FREE (sem assinatura ativa pelo passo anterior)
+        // cliente está FREE (sem assinatura ativa pelo passo anterior).
         Cookie master = loginE("master@trader.local");
-        mvc.perform(post("/api/operacoes")
+        MvcResult pub = mvc.perform(post("/api/operacoes")
                         .cookie(master, csrf()).header("X-XSRF-TOKEN", CSRF)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(corpoCompraPadrao()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn();
+        String idRecemPublicada = json.readTree(pub.getResponse().getContentAsString()).get("id").asText();
 
         Cookie cliente = loginE("cliente@trader.local");
         MvcResult res = mvc.perform(get("/api/operacoes/ao-vivo").cookie(cliente))
                 .andExpect(status().isOk())
                 .andReturn();
         JsonNode lista = json.readTree(res.getResponse().getContentAsString());
-        // operação recém-publicada ainda não aparece para FREE (atraso de 15min)
-        boolean temRecemPublicada = false;
+
+        // A operação recém-publicada NÃO deve aparecer para quem só tem VER_OPERACAO_COM_ATRASO.
         for (JsonNode op : lista) {
-            if (op.get("publicadaEm").asText().startsWith("2026")) {
-                // qualquer operação com data real
-                continue;
-            }
-            temRecemPublicada = true;
+            assertThat(op.get("id").asText()).isNotEqualTo(idRecemPublicada);
         }
-        // Só devem aparecer as operações antigas (do passo 3), nunca a nova.
-        // (Validação explícita: lista tem exatamente 1, a antiga.)
-        assertThat(lista.size()).isEqualTo(1);
     }
 
     @Test
