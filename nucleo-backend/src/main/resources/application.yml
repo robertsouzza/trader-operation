@@ -49,3 +49,7 @@ trader:
     secret-key: ${TRADER_S3_SECRET_KEY}
     bucket: ${TRADER_S3_BUCKET:trader-arquivos}
     region: us-east-1
+  motor:
+    base-url: ${TRADER_MOTOR_BASE_URL}
+    shared-token: ${MOTOR_SHARED_TOKEN}
+    timeout-segundos: 5

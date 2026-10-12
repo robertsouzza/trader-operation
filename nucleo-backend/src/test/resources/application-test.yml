@@ -17,3 +17,7 @@ trader:
     endpoint: http://localhost:8333
     access-key: teste
     secret-key: teste
+  motor:
+    base-url: http://motor-quant-fake:8091
+    shared-token: shared-token-de-teste
+    timeout-segundos: 2

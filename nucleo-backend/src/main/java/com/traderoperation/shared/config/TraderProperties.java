@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 /** Configurações próprias da aplicação (prefixo {@code trader}). Segredos vêm de variáveis de ambiente. */
 @Validated
 @ConfigurationProperties(prefix = "trader")
-public record TraderProperties(Jwt jwt, Cookie cookie, Cors cors, S3 s3) {
+public record TraderProperties(Jwt jwt, Cookie cookie, Cors cors, S3 s3, Motor motor) {
 
     public record Jwt(
             @NotBlank @Size(min = 64, message = "o segredo JWT precisa ter ao menos 64 caracteres") String secret,
@@ -27,5 +27,12 @@ public record TraderProperties(Jwt jwt, Cookie cookie, Cors cors, S3 s3) {
 
     public record S3(@NotBlank String endpoint, @NotBlank String accessKey, @NotBlank String secretKey,
                      @NotBlank String bucket, @NotBlank String region) {
+    }
+
+    /** Config do cliente HTTP para o motor-quant (D-28). */
+    public record Motor(
+            @NotBlank String baseUrl,
+            @NotBlank String sharedToken,
+            @Min(1) long timeoutSegundos) {
     }
 }

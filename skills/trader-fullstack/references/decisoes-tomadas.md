@@ -191,6 +191,33 @@ Nesta fase, uma operação sai de `PUBLICADA` para `ENCERRADA` só quando o mast
 
 ---
 
+## Gráfico e dados de mercado para o browser
+
+### D-28 · Proxy `/api/mercado/candles` no nucleo-backend
+
+O browser **nunca** fala direto com o `motor-quant`: isso quebraria D-23 (shared secret interno). O `nucleo-backend` ganha um módulo `mercado` com `GET /api/mercado/candles?ativo&timeframe&limite` protegido por `@PreAuthorize("hasAuthority('VER_OPERACAO_TEMPO_REAL')")`. O service repassa a chamada ao motor via `MotorQuantPort` → `MotorQuantHttpAdapter`, que adiciona o header `X-INTERNAL-TOKEN` lido de `MOTOR_SHARED_TOKEN`. Nenhuma persistência nem cache nesta skill — se o volume justificar, Redis TTL curto entra numa decisão futura.
+
+**Por quê:** mantém o shared secret longe do browser, deixa o nucleo-backend como o único ponto que fala com o motor (pode encaixar cache, autorização por ativo, auditoria), e o frontend continua autenticando por cookie (D-10). (12/out/2026)
+
+### D-29 · Linhas horizontais com rótulos para entrada/stop/alvos
+
+No `GraficoCandles` do frontend, cada operação ganha linhas via `createPriceLine` do Lightweight Charts:
+- **Entrada**: cor `acento` (azul `#38bdf8`), rótulo `E @ <valor>`.
+- **Stop**: cor `erro` (vermelho `#ef4444`), rótulo `S @ <valor>`.
+- **Alvos**: cor `sucesso` (verde `#22c55e`), rótulos `A1 @ <valor>`, `A2 @ <valor>`, etc.
+
+Sombreamento por área (`Area Series` entre entrada↔alvo) e markers nos candles ficam para skill futura caso virem demanda.
+
+**Por quê:** Lightweight Charts já desenha `priceLine` com rótulo no eixo direito; implementação direta, sem código extra, resultado limpo. (12/out/2026)
+
+### D-30 · Gráfico substitui a OperacaoPage REST
+
+A rota `/operacoes/:id` passa a ter o `GraficoCandles` como protagonista; os dados da operação (entrada, stop, alvos, estratégia, resultado), o contador de participantes e o chat ao vivo da skill 05 ficam em painel lateral (`lg:grid-cols-[1fr_320px]`). Em telas estreitas o layout vira 1 coluna. Nenhuma rota nova nem página de "explorar o gráfico sem operação" nesta skill — se virar demanda, abre decisão.
+
+**Por quê:** evita duplicar UI do produto e deixa a tela principal já com cara de ferramenta de operação. (12/out/2026)
+
+---
+
 ## Fluxo de trabalho
 
 ### D-18 · Fim de skill = commit + push + PR automáticos

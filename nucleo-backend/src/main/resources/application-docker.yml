@@ -21,3 +21,6 @@ trader:
     endpoint: http://s3:8333
     access-key: ${TRADER_S3_ACCESS_KEY:trader_dev}
     secret-key: ${TRADER_S3_SECRET_KEY:trader_dev_secret}
+  motor:
+    base-url: ${TRADER_MOTOR_BASE_URL:http://motor-quant:8091}
+    shared-token: ${MOTOR_SHARED_TOKEN:dev-interno-trocar-em-producao}
