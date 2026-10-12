@@ -218,6 +218,34 @@ A rota `/operacoes/:id` passa a ter o `GraficoCandles` como protagonista; os dad
 
 ---
 
+## IA analista
+
+### D-31 · Modelo padrão: Claude Sonnet 5.5
+
+O `motor-quant` conversa com a IA via o SDK oficial `anthropic` (Python). Modelo padrão `claude-sonnet-5-5` — bom equilíbrio qualidade/custo (~US$3/MTok input, US$15/MTok output), suporta tool-use nativo, respostas boas para análise técnica. OpenAI e Ollama entram como adapters futuros via `ProvedorIAPort` (D-12). Trocar o modelo padrão é só variável de ambiente (`TRADER_IA_MODELO`); não exige redeploy.
+
+**Por quê:** D-12 já fixou Claude como padrão; Sonnet 5.5 cabe no orçamento de MVP e é mais do que suficiente para explicar gráficos. Haiku pode entrar para fluxos de alta frequência futuramente; Opus fica fora do custo-benefício até os clientes exigirem. (12/out/2026)
+
+### D-32 · Streaming da IA via STOMP
+
+A resposta da IA chega aos poucos no cliente via WebSocket STOMP (`/topic/ia/sessao/{sessaoId}`), reusando toda a infra da skill 05. O motor-quant expõe o streaming como SSE (nativo para a biblioteca da Anthropic); o `nucleo-backend` consome o SSE via `WebClient` (webflux) e re-publica cada fragmento no tópico STOMP. SSE puro para o browser e endpoint REST síncrono foram descartados: SSE para o browser abriria uma segunda infra de real-time paralela ao STOMP já existente; REST síncrono deixa o cliente 10-30s olhando a tela parada.
+
+**Por quê:** uma só infra de real-time para toda a plataforma; UX de "IA digitando" sem código novo no cliente além de uma assinatura. (12/out/2026)
+
+### D-33 · Histórico de conversas com a IA em Postgres
+
+Toda mensagem (usuário, IA, chamadas de ferramenta e seus resultados) é persistida em `ia_mensagens` dentro do `nucleo-backend`. Satisfaz RF-14 (diário auditável), permite revisitar análises depois, habilita análise de qualidade da IA e cálculo de custo retroativo. Sessão (`ia_sessoes`) é única por par `(usuario_id, operacao_id)` — pedir à IA sobre a mesma operação continua a mesma conversa.
+
+**Por quê:** auditoria é inegociável quando dinheiro está em jogo; o custo de armazenamento é baixo (texto). (12/out/2026)
+
+### D-34 · Ferramenta inicial: só `ler_cotacoes`
+
+A skill 07 entrega apenas uma ferramenta: `ler_cotacoes`, que delega ao próprio motor-quant (reusa `CandleRepositorio` da skill 04). A IA pode "olhar" o gráfico mas não calcula indicadores de cabeça. As demais ferramentas listadas em D-12 (`calcular_indicador`, `consultar_operacao_atual`, `buscar_conhecimento` via RAG, `propor_ordem`) entram em skills futuras com código em cima do mesmo loop de tool-use.
+
+**Por quê:** valida o loop end-to-end (SDK + tool-use + streaming + persistência) com complexidade mínima; cada nova ferramenta vira um arquivo isolado implementando `FerramentaPort`, sem retrabalho. (12/out/2026)
+
+---
+
 ## Fluxo de trabalho
 
 ### D-18 · Fim de skill = commit + push + PR automáticos

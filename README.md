@@ -83,7 +83,8 @@ O sistema é gerado em **skills numeradas** do Claude Code, cada uma com Definit
 | 04 | [trader-04-motor-quant-base](skills/trader-04-motor-quant-base/SKILL.md) | ✅ concluída |
 | 05 | [trader-05-operacoes-tempo-real](skills/trader-05-operacoes-tempo-real/SKILL.md) | ✅ concluída |
 | 06 | [trader-06-frontend-grafico](skills/trader-06-frontend-grafico/SKILL.md) | ✅ concluída |
-| 07–12 | ver [índice](skills/trader-fullstack/SKILL.md) | ⏳ pendentes |
+| 07 | [trader-07-ia-analista](skills/trader-07-ia-analista/SKILL.md) | 📝 SKILL.md escrito, implementação adiada |
+| 08–12 | ver [índice](skills/trader-fullstack/SKILL.md) | ⏳ pendentes |
 
 ## Licença
 
