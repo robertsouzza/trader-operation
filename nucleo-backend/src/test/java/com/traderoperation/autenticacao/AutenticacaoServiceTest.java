@@ -52,6 +52,11 @@ class AutenticacaoServiceTest {
         public Optional<UUID> validarRefresh(String token) {
             return token.startsWith("refresh-") ? Optional.of(UUID.fromString(token.substring(8))) : Optional.empty();
         }
+
+        @Override
+        public Optional<com.traderoperation.shared.security.UsuarioAutenticado> validarAccess(String token) {
+            return Optional.empty();
+        }
     };
     private final RegistrarAuditoriaUseCase auditoria =
             (usuarioId, acao, entidade, entidadeId, dados) -> acoesAuditadas.add(acao);

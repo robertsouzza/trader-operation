@@ -9,6 +9,11 @@ interface Item {
 
 const ITENS: readonly Item[] = [
   { caminho: '/', rotulo: 'Início' },
+  {
+    caminho: '/operacoes',
+    rotulo: 'Operações ao vivo',
+    direitoRequerido: 'VER_OPERACAO_TEMPO_REAL',
+  },
   { caminho: '/meu-plano', rotulo: 'Meu plano' },
   { caminho: '/planos', rotulo: 'Catálogo de planos' },
   {

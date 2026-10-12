@@ -7,6 +7,8 @@ import { HomePage } from '@/features/home/pages/HomePage';
 import { CatalogoPlanosPage } from '@/features/planos/pages/CatalogoPlanosPage';
 import { MeuPlanoPage } from '@/features/planos/pages/MeuPlanoPage';
 import { ListaUsuariosPage } from '@/features/admin/pages/ListaUsuariosPage';
+import { ListaOperacoesPage } from '@/features/operacoes/pages/ListaOperacoesPage';
+import { OperacaoPage } from '@/features/operacoes/pages/OperacaoPage';
 import { SemPermissaoPage } from '@/shared/paginas/SemPermissaoPage';
 import { NaoEncontradaPage } from '@/shared/paginas/NaoEncontradaPage';
 
@@ -38,6 +40,22 @@ export default function App() {
           element={
             <RotaPorDireito direito="ADMINISTRAR_USUARIOS">
               <ListaUsuariosPage />
+            </RotaPorDireito>
+          }
+        />
+        <Route
+          path="/operacoes"
+          element={
+            <RotaPorDireito direito="VER_OPERACAO_TEMPO_REAL">
+              <ListaOperacoesPage />
+            </RotaPorDireito>
+          }
+        />
+        <Route
+          path="/operacoes/:id"
+          element={
+            <RotaPorDireito direito="VER_OPERACAO_TEMPO_REAL">
+              <OperacaoPage />
             </RotaPorDireito>
           }
         />

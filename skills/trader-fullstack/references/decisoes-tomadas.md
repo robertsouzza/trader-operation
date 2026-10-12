@@ -167,6 +167,30 @@ A skill 04 entrega quatro indicadores sobre fechamentos: **SMA**, **EMA**, **RSI
 
 ---
 
+## Operações em tempo real
+
+### D-25 · Spring WebSocket + STOMP
+
+A camada ao vivo entre `nucleo-backend` e `frontend-app` (e, mais tarde, Copiloto) é feita com Spring WebSocket + STOMP sobre WebSocket nativo (sem SockJS). Padrão bidirecional já validado no SGCE, cliente maduro em JS (`@stomp/stompjs`), convenção clara de tópicos (`/topic/operacoes/*`, `/topic/chat/{id}`). Autenticação no handshake lê o cookie `trader_access` e injeta o `UsuarioAutenticado` no Principal da sessão WS; direitos (via `VerificarDireitoUseCase`) decidem assinaturas permitidas no `ChannelInterceptor`.
+
+**Por quê:** mesma stack que o SGCE já roda em produção, cliente JS maduro, convenção clara, permite chat (bidirecional) sem endpoint REST paralelo. (10/out/2026)
+
+### D-26 · Operações e chat persistidos em Postgres; Redis para pub/sub ao vivo e contador
+
+Operações publicadas e mensagens de chat vão para o Postgres (tabelas `operacoes` e `chat_mensagens`), coerentes com RF-14 (diário auditável) e sobrevivendo a restart do backend. O Redis cuida de duas coisas voláteis:
+- **Pub/sub** entre instâncias do `nucleo-backend`: cada instância assina os canais `trader:operacoes:*` e `trader:chat:*` e re-broadcasta via STOMP para clientes locais (broker in-memory). Isso permite escalar horizontalmente sem RabbitMQ.
+- **Contador de participantes** por operação: `SADD`/`SREM` com o `session_id` do STOMP; `SCARD` dá o número ao vivo. Repopulado por `SessionSubscribeEvent`/`SessionDisconnectEvent`.
+
+**Por quê:** auditoria + robustez do Postgres onde importa, latency e simplicidade do Redis onde não precisa persistir. Preparado para múltiplas instâncias desde o começo. (10/out/2026)
+
+### D-27 · Encerramento de operação só manual pelo master (nesta skill)
+
+Nesta fase, uma operação sai de `PUBLICADA` para `ENCERRADA` só quando o master clica "Encerrar" na UI (ou chama `POST /api/operacoes/{id}/encerrar`), informando `resultado` (`GAIN`/`LOSS`/`NEUTRO`/`INDEFINIDO`) e uma observação opcional. Encerramento automático por cruzamento de preço contra stop/alvo entra em uma skill futura, quando o `motor-quant` estiver recebendo cotações ao vivo do VPS (D-22).
+
+**Por quê:** simples, auditável, nenhuma dependência de ingestão de preço em produção; o custo é o master precisar fechar manualmente, aceitável para o MVP. (10/out/2026)
+
+---
+
 ## Fluxo de trabalho
 
 ### D-18 · Fim de skill = commit + push + PR automáticos
