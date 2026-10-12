@@ -48,6 +48,17 @@ public class GlobalExceptionHandler {
         return resposta(HttpStatus.BAD_REQUEST, "Corpo da requisição inválido.");
     }
 
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    ResponseEntity<ErroResposta> tipoParametroInvalido(
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException e) {
+        return resposta(HttpStatus.BAD_REQUEST, "Parâmetro '" + e.getName() + "' inválido.");
+    }
+
+    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+    ResponseEntity<ErroResposta> restricaoInvalida(jakarta.validation.ConstraintViolationException e) {
+        return resposta(HttpStatus.BAD_REQUEST, "Parâmetros inválidos.");
+    }
+
     @ExceptionHandler(Exception.class)
     ResponseEntity<ErroResposta> inesperado(Exception e) {
         // Exceções do próprio Spring MVC (404 de rota, 405, 415...) já trazem o status certo.

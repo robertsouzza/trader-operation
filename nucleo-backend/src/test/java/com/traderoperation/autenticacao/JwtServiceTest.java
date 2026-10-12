@@ -23,7 +23,8 @@ class JwtServiceTest {
     private static TraderProperties props(String segredo) {
         return new TraderProperties(new TraderProperties.Jwt(segredo, 15, 7), new TraderProperties.Cookie(false),
                 new TraderProperties.Cors(List.of("http://localhost:5173")),
-                new TraderProperties.S3("http://s3", "a", "b", "c", "us-east-1"));
+                new TraderProperties.S3("http://s3", "a", "b", "c", "us-east-1"),
+                new TraderProperties.Motor("http://motor", "token", 5));
     }
 
     private static JwtService servico(Instant agora) {

@@ -16,7 +16,7 @@ class ArquiteturaHexagonalTest {
 
     /** Módulos de negócio. Ao criar um módulo novo, inclua-o aqui. */
     private static final List<String> MODULOS = List.of(
-            "autenticacao", "auditoria", "planos", "operacoes", "chat", "tempo_real");
+            "autenticacao", "auditoria", "planos", "operacoes", "chat", "tempo_real", "mercado");
 
     @ArchTest
     static final ArchRule dominioNaoConheceFrameworks = noClasses()
